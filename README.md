@@ -74,11 +74,7 @@ The backend provides RESTful APIs for managing task lists and tasks. For detaile
 ### Running the Backend
 
 1. Navigate to the `tasks` directory.
-2. Start PostgreSQL using the provided `docker-compose.yml` file:
-   ```bash
-   docker-compose up -d
-   ```
-3. Run the Spring Boot application:
+2. Run the Spring Boot application:
    ```bash
    ./mvnw spring-boot:run
    ```
@@ -98,4 +94,4 @@ The backend provides RESTful APIs for managing task lists and tasks. For detaile
 
 ## Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+
