@@ -2,14 +2,23 @@ import React from 'react';
 import { CheckCircle2, Clock, Edit, Trash2 } from 'lucide-react';
 import { TaskDto, TaskPriority, TaskStatus } from '../../types';
 
+// Defines the properties that the TaskList component accepts.
 interface TaskListProps {
-  tasks: TaskDto[];
-  onEdit: (task: TaskDto) => void;
-  onDelete: (id: string) => void;
-  onToggleStatus: (task: TaskDto) => void;
+  tasks: TaskDto[]; // An array of task objects to display.
+  onEdit: (task: TaskDto) => void; // Function to handle editing a task.
+  onDelete: (id: string) => void; // Function to handle deleting a task.
+  onToggleStatus: (task: TaskDto) => void; // Function to handle toggling the task's status.
 }
 
+/**
+ * TaskList Component
+ * 
+ * This component renders a list of individual tasks. It handles displaying
+ * task details, priority badges, due dates, and provides controls for
+ * editing, deleting, and marking tasks as complete.
+ */
 const TaskList: React.FC<TaskListProps> = ({ tasks, onEdit, onDelete, onToggleStatus }) => {
+  // If there are no tasks, display a message to the user.
   if (tasks.length === 0) {
     return (
       <div className="text-center py-8">
@@ -17,13 +26,12 @@ const TaskList: React.FC<TaskListProps> = ({ tasks, onEdit, onDelete, onToggleSt
           <Clock className="h-full w-full" />
         </div>
         <h3 className="mt-2 text-sm font-medium text-gray-900 dark:text-white">No tasks</h3>
-        <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-          Get started by creating a new task.
-        </p>
+        <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Get started by creating a new task.</p>
       </div>
     );
   }
 
+  // Returns a styled badge based on the task's priority.
   const getPriorityBadge = (priority: TaskPriority) => {
     switch (priority) {
       case TaskPriority.HIGH:
@@ -35,25 +43,19 @@ const TaskList: React.FC<TaskListProps> = ({ tasks, onEdit, onDelete, onToggleSt
     }
   };
 
+  // Formats a date string into a more readable format.
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
-    });
+    return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
   };
 
+  // Checks if a task is overdue.
   const isOverdue = (dateString: string, status: TaskStatus) => {
     if (status === TaskStatus.CLOSED) return false;
-    
     const dueDate = new Date(dateString);
     const today = new Date();
-    
-    // Remove time information for comparison
     today.setHours(0, 0, 0, 0);
     dueDate.setHours(0, 0, 0, 0);
-    
     return dueDate < today;
   };
 
@@ -84,32 +86,24 @@ const TaskList: React.FC<TaskListProps> = ({ tasks, onEdit, onDelete, onToggleSt
                     task.status === TaskStatus.CLOSED
                       ? 'text-gray-500 dark:text-gray-400 line-through'
                       : 'text-gray-900 dark:text-white'
-                  }`}>
-                    {task.title}
-                  </h3>
+                  }`}>{task.title}</h3>
                   <div className="ml-4 flex-shrink-0 flex items-center space-x-2">
                     <button
                       onClick={() => onEdit(task)}
                       className="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300"
                       aria-label="Edit task"
-                    >
-                      <Edit className="h-4 w-4" />
-                    </button>
+                    ><Edit className="h-4 w-4" /></button>
                     <button
                       onClick={() => task.id && onDelete(task.id)}
                       className="text-gray-400 hover:text-red-500 dark:hover:text-red-400"
                       aria-label="Delete task"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </button>
+                    ><Trash2 className="h-4 w-4" /></button>
                   </div>
                 </div>
                 {task.description && (
                   <p className={`text-sm text-gray-500 dark:text-gray-400 ${
                     task.status === TaskStatus.CLOSED ? 'line-through' : ''
-                  }`}>
-                    {task.description}
-                  </p>
+                  }`}>{task.description}</p>
                 )}
                 <div className="mt-2 flex items-center justify-between text-sm">
                   <div className="flex items-center gap-2">

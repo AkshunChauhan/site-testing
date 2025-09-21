@@ -3,14 +3,24 @@ import { Edit, Trash2, ChevronRight } from 'lucide-react';
 import { TaskListDto } from '../../types';
 import ProgressBar from '../common/ProgressBar';
 
+// Defines the properties that the TaskListCard component accepts.
 interface TaskListCardProps {
-  taskList: TaskListDto;
-  onView: (id: string) => void;
-  onEdit: (taskList: TaskListDto) => void;
-  onDelete: (id: string) => void;
+  taskList: TaskListDto; // The task list object to display.
+  onView: (id: string) => void; // Function to handle viewing the task list.
+  onEdit: (taskList: TaskListDto) => void; // Function to handle editing the task list.
+  onDelete: (id: string) => void; // Function to handle deleting the task list.
 }
 
+/**
+ * TaskListCard Component
+ * 
+ * This component renders a single card for a task list, displaying its title,
+ * description, progress, and task count. It also provides buttons for
+ * editing, deleting, and viewing the tasks within the list.
+ */
 const TaskListCard: React.FC<TaskListCardProps> = ({ taskList, onView, onEdit, onDelete }) => {
+  
+  // A wrapper function to call the onView prop with the task list's ID.
   const handleView = () => {
     if (taskList.id) onView(taskList.id);
   };
@@ -19,6 +29,7 @@ const TaskListCard: React.FC<TaskListCardProps> = ({ taskList, onView, onEdit, o
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden transition-all duration-200 hover:shadow-md group">
       <div className="p-5">
         <div className="flex justify-between items-start">
+          {/* Task list title and edit/delete buttons */}
           <h3 className="font-semibold text-lg text-gray-900 dark:text-white">{taskList.title}</h3>
           <div className="flex space-x-1">
             <button 
@@ -38,10 +49,12 @@ const TaskListCard: React.FC<TaskListCardProps> = ({ taskList, onView, onEdit, o
           </div>
         </div>
         
+        {/* Task list description with line clamping to prevent overflow */}
         <p className="mt-2 text-sm text-gray-600 dark:text-gray-300 line-clamp-2">
           {taskList.description || 'No description'}
         </p>
         
+        {/* Progress bar and percentage */}
         <div className="mt-4">
           <div className="flex justify-between items-center text-xs text-gray-500 dark:text-gray-400 mb-1">
             <span>Progress</span>
@@ -50,6 +63,7 @@ const TaskListCard: React.FC<TaskListCardProps> = ({ taskList, onView, onEdit, o
           <ProgressBar value={taskList.progress || 0} total={1} />
         </div>
         
+        {/* Task count and View Tasks button */}
         <div className="mt-4 flex justify-between items-center">
           <div className="text-sm text-gray-500 dark:text-gray-400">
             {taskList.count || 0} tasks
