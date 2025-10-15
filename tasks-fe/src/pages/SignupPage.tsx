@@ -1,67 +1,51 @@
 
-// Import necessary hooks from React for state management and navigation.
-import { useState } from 'react';
-// Import routing components from react-router-dom.
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-// Import Firebase authentication function for creating users.
 import { createUserWithEmailAndPassword } from 'firebase/auth';
-// Import the Firebase auth instance from our config file.
 import { auth } from '../firebaseConfig';
+import { useAuth } from '../context/AuthContext'; // Import useAuth
 
-/**
- * SignupPage Component
- * 
- * This component provides a form for users to create a new account
- * using their email and password.
- */
 function SignupPage() {
-  // State hooks for managing form inputs and error messages.
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  
-  // Hook for programmatic navigation.
   const navigate = useNavigate();
+  const { currentUser } = useAuth(); // Get the current user
 
-  /**
-   * Handles the user signup process.
-   * @param e - The form event.
-   */
+  // Redirect if user is already logged in
+  useEffect(() => {
+    if (currentUser) {
+      navigate('/');
+    }
+  }, [currentUser, navigate]);
+
   const handleSignup = async (e: React.FormEvent) => {
-    e.preventDefault(); // Prevent default form submission behavior.
-    setError(''); // Reset any previous errors.
+    e.preventDefault();
+    setError('');
 
-    // Basic client-side validation for password length.
     if (password.length < 6) {
       setError('Password should be at least 6 characters long.');
-      return; // Stop the function if validation fails.
+      return;
     }
 
     try {
-      // Attempt to create a new user with Firebase Authentication.
       await createUserWithEmailAndPassword(auth, email, password);
-      // On successful creation, navigate the user to the home page.
       navigate('/');
     } catch (err: any) {
-      // Handle specific Firebase errors.
       if (err.code === 'auth/email-already-in-use') {
         setError('This email address is already in use.');
       } else {
-        // For other errors, show a generic message.
         setError('Failed to create an account. Please try again.');
       }
     }
   };
 
-  // The JSX structure for the signup page.
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
       <div className="max-w-md w-full bg-white dark:bg-gray-800 shadow-md rounded-lg p-8">
         <h2 className="text-2xl font-bold text-center text-gray-900 dark:text-white mb-6">Create Your Account</h2>
-        {/* Display the error message if it exists. */}
         {error && <p className="text-red-500 text-center mb-4">{error}</p>}
         
-        {/* Signup form */}
         <form onSubmit={handleSignup} className="space-y-6">
           <div>
             <label htmlFor="email" className="sr-only">Email</label>
@@ -95,7 +79,6 @@ function SignupPage() {
           </button>
         </form>
 
-        {/* Link to the login page for existing users */}
         <p className="mt-8 text-center text-sm text-gray-600 dark:text-gray-400">
           Already have an account? <Link to="/login" className="font-medium text-blue-600 hover:text-blue-500">Login</Link>
         </p>
